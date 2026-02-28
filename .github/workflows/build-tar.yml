@@ -1,0 +1,31 @@
+name: Build Auto Record Mi Token Tar
+
+on:
+  workflow_dispatch: # 允许手动触发运行
+
+jobs:
+  build_and_save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        run: |
+          # 使用你指定的名称构建镜像
+          docker build -t auto_record_mi_token:latest .
+
+      - name: Save Image to Tar
+        run: |
+          # 将构建好的镜像保存为 tar 文件
+          docker save -o auto_record_mi_token.tar auto_record_mi_token:latest
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: mi-token-image-package
+          path: auto_record_mi_token.tar
+          retention-days: 1
